@@ -1,0 +1,50 @@
+flowchart LR
+    site["Сайт банка<br/>PHP + React"]
+    call_center_system["Система кол-центра"]
+    sms_gateway["SMS-шлюз"]
+
+    subgraph ib["Интернет-банк"]
+        ib_ui["Web UI<br/>ASP.NET MVC 4.5"]
+        ib_sms["Модуль подтверждения операций по SMS"]
+        ib_adapter["Модуль интеграции с платформой депозитов"]
+    end
+
+    subgraph platform["Платформа онлайн-депозитов"]
+        catalog["Deposit Catalog API"]
+        app_api["Deposit Application API"]
+        rate_registry["Rate Registry"]
+        personal_offer["Personal Offer Service"]
+        abs_worker["ABS Integration Worker"]
+        notify["Notification Adapter"]
+        db["MS SQL"]
+    end
+
+    subgraph abs["АБС"]
+        abs_front["Модуль депозитов и накопительных счетов"]
+        abs_integration["Интеграционный пакет / staging schema"]
+        abs_core["Счета, документы, клиентские данные"]
+    end
+
+    site -->|каталог и лиды| catalog
+    site -->|создание заявки| app_api
+
+    ib_ui --> ib_sms
+    ib_sms --> ib_adapter
+    ib_adapter -->|каталог и персональные ставки| catalog
+    ib_adapter -->|создание подтверждённой заявки| app_api
+
+    catalog --> rate_registry
+    catalog --> personal_offer
+    app_api --> db
+    rate_registry --> db
+    personal_offer --> db
+    app_api --> abs_worker
+    abs_worker --> abs_integration
+    abs_integration --> abs_front
+    abs_front --> abs_core
+    abs_core --> abs_integration
+    abs_integration --> abs_worker
+    abs_worker --> notify
+    notify --> sms_gateway
+
+    app_api -->|лиды с сайта| call_center_system

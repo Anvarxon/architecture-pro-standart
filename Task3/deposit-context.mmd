@@ -1,0 +1,28 @@
+flowchart LR
+    customer_new["Новый клиент"]
+    customer_existing["Действующий клиент"]
+    call_center["Оператор кол-центра"]
+    back_office["Менеджер бэк-офиса депозитов"]
+
+    site["Сайт банка"]
+    internet_bank["Интернет-банк"]
+    deposit_platform["Платформа онлайн-депозитов<br/>ASP.NET Core /.NET 8"]
+    abs["АБС"]
+    sms_gateway["SMS-шлюз"]
+    call_center_system["Система кол-центра"]
+
+    customer_new -->|смотрит каталог и оставляет заявку| site
+    customer_existing -->|смотрит ставки и подаёт заявку| internet_bank
+
+    site -->|получение каталога и создание лида| deposit_platform
+    internet_bank -->|получение каталога, персональных ставок и создание заявки| deposit_platform
+
+    deposit_platform -->|заявка на обработку| abs
+    deposit_platform -->|лид для звонка| call_center_system
+    call_center -->|обрабатывает лид| call_center_system
+    back_office -->|подтверждает условия и открывает депозит| abs
+
+    abs -->|статусы обработки| deposit_platform
+    deposit_platform -->|SMS о ставке и открытии| sms_gateway
+    sms_gateway -->|доставка сообщений| customer_new
+    sms_gateway -->|доставка сообщений| customer_existing

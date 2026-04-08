@@ -1,0 +1,43 @@
+flowchart LR
+    back_office["Сотрудник бэк-офиса"]
+    bank_cc["Система кол-центра банка"]
+    partner_exchange["Файловый контур банка"]
+    partner_cc["Партнёрский кол-центр"]
+    website["Сайт банка"]
+    internet_bank["Интернет-банк"]
+
+    subgraph platform["Платформа ставок"]
+        ui["Rate Management UI"]
+        registry["Rate Registry"]
+        api["Rates API"]
+        distributor["Distribution Service"]
+        exporter["Partner File Exporter"]
+        journal["Publication Journal"]
+        db["MS SQL"]
+    end
+
+    subgraph cc_adapter["Адаптер ставок в системе кол-центра"]
+        sync_job["Плановый забор ставок"]
+        cache["Локальный кэш ставок"]
+        operator_view["Виджет оператора"]
+    end
+
+    back_office --> ui
+    ui --> registry
+    registry --> db
+    api --> db
+    distributor --> registry
+    distributor --> journal
+    distributor --> exporter
+    exporter --> journal
+
+    website --> api
+    internet_bank --> api
+
+    bank_cc --> sync_job
+    sync_job --> api
+    sync_job --> cache
+    cache --> operator_view
+
+    exporter --> partner_exchange
+    partner_exchange --> partner_cc

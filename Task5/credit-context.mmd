@@ -1,0 +1,29 @@
+flowchart LR
+    customer_new["Новый клиент"]
+    customer_existing["Действующий клиент"]
+    branch_manager["Менеджер отделения"]
+
+    website["Сайт банка"]
+    internet_bank["Интернет-банк"]
+    abs["АБС"]
+    credit_hub["Digital Credit Hub<br/>ASP.NET Core /.NET 8"]
+    conveyor["Кредитный конвейер"]
+    scoring["Система скоринга"]
+    bki["Бюро кредитных историй"]
+    sms_gateway["SMS-шлюз"]
+
+    customer_new -->|просмотр условий и подача заявки| website
+    customer_existing -->|просмотр предложений и подача заявки| internet_bank
+    branch_manager -->|поиск и продолжение заявки| abs
+
+    website -->|каталог и заявка| credit_hub
+    internet_bank -->|каталог, офферы, заявка| credit_hub
+    abs -->|поиск или создание заявки| credit_hub
+
+    credit_hub -->|цифровая заявка| conveyor
+    conveyor -->|запрос скоринга| scoring
+    scoring -->|онлайн-запрос| bki
+
+    conveyor -->|статус и решение| credit_hub
+    credit_hub -->|статусы, данные для выдачи| abs
+    credit_hub -->|SMS по статусам| sms_gateway
