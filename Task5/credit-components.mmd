@@ -1,0 +1,47 @@
+flowchart LR
+    website["Сайт банка"]
+    internet_bank["Интернет-банк"]
+    abs["АБС"]
+    conveyor["Кредитный конвейер"]
+    scoring["Система скоринга"]
+    sms_gateway["SMS-шлюз"]
+
+    subgraph hub["Digital Credit Hub"]
+        catalog["Credit Catalog API"]
+        app_api["Credit Application API"]
+        registry["Application Registry"]
+        offers["Offer Store"]
+        orchestrator["Decision Orchestrator"]
+        abs_adapter["ABS Channel Adapter"]
+        conveyor_adapter["Conveyor Adapter"]
+        notifications["Notification Service"]
+        disbursement["ABS Disbursement Adapter"]
+        db["MS SQL"]
+    end
+
+    website --> catalog
+    website --> app_api
+
+    internet_bank --> catalog
+    internet_bank --> offers
+    internet_bank --> app_api
+
+    abs --> abs_adapter
+    abs_adapter --> registry
+    abs_adapter --> app_api
+
+    app_api --> registry
+    app_api --> orchestrator
+    offers --> db
+    catalog --> db
+    registry --> db
+
+    orchestrator --> conveyor_adapter
+    conveyor_adapter --> conveyor
+    conveyor --> scoring
+    conveyor --> registry
+
+    registry --> notifications
+    notifications --> sms_gateway
+    registry --> disbursement
+    disbursement --> abs

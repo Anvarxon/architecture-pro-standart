@@ -1,0 +1,21 @@
+flowchart LR
+    back_office["Сотрудник банка, публикующий ставки"]
+    call_operator["Оператор кол-центра банка"]
+    partner_operator["Оператор партнёрского кол-центра"]
+
+    rate_platform["Платформа ставок"]
+    website["Сайт банка"]
+    internet_bank["Интернет-банк"]
+    bank_cc["Система кол-центра банка"]
+    partner_exchange["Файловый контур обмена с партнёром"]
+    partner_cc["Система партнёрского кол-центра"]
+
+    back_office -->|утверждает и публикует ставки| rate_platform
+    rate_platform -->|актуальный каталог ставок| website
+    rate_platform -->|актуальный каталог ставок| internet_bank
+    rate_platform -->|Rates API| bank_cc
+    call_operator -->|консультирует клиента по ставкам| bank_cc
+
+    rate_platform -->|файл со ставками| partner_exchange
+    partner_exchange -->|XLSX / CSV| partner_cc
+    partner_operator -->|консультирует клиента по ставкам| partner_cc
